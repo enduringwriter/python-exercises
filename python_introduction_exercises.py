@@ -1,15 +1,8 @@
-"""
-blah 
-"""
 
-# print("Hello World!")
-# response = ''
-# counter = 0
-# while response != 'stop_please':
-#     response = input("Say something: ")
-#     counter += 1
-#     if counter >= 5:
-#         break
+print("Hello World!")
+
+greeting = "Hello everyone!"
+print(greeting)
 
 items = ['banana', 'apple', 'kiwi']
 items_list = []
@@ -17,6 +10,10 @@ for i, item in enumerate (items):
     print(i, item)
     x = (i, item)
     items_list.append(x)
+print("items", items_list)
 
-print(items_list)
-# list(enumerate(items_list))
+
+print(list(enumerate(items)))
+
+x = enumerate(items)
+print('dict', dict(x))
