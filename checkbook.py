@@ -1,4 +1,8 @@
-# checkbook.py is a command line checkbook application that allows users to track their finances
+"""
+checkbook.py is a command line checkbook application that allows users to track their finances
+first python project at Codeup
+"""
+
 import csv
 import os
 
@@ -35,15 +39,22 @@ def get_checkbook_balance():
         lines = []
         for line in content:
             lines.append(line)
+        print(lines)
         current_transaction = lines[-1]["balance"]
+        print(f"current_transaction: {current_transaction}")
         if lines[-2]["balance"] == "balance":
             previous_transaction = 0
         else:
             previous_transaction = lines[-2]["balance"]
-        print(previous_transaction)
+        print(f"previous_transaction: {previous_transaction}")
         print(type(previous_transaction))
-        get_current_balance = int(current_transaction) + int(previous_transaction)
-    return get_current_balance
+        current_total = int(current_transaction) + int(previous_transaction)
+        print(type(current_total))
+    return current_total
+
+# checkbook works but only after you apply checkbook_balance after each transaction
+# TODO redo to sum entire column but not the header, so use next
+# https://stackoverflow.com/questions/13517080/sum-a-csv-column-in-python
 
 
 def get_valid_input_debit_or_credit(get_choice):
@@ -53,7 +64,7 @@ def get_valid_input_debit_or_credit(get_choice):
     :return: valid input
     """
     if get_choice == 2:
-       choice_value = 'debit'
+        choice_value = 'debit'
     else:
         choice_value = 'credit'
     while True:
@@ -62,6 +73,23 @@ def get_valid_input_debit_or_credit(get_choice):
             valid_input_debit_or_credit = int(debit_or_credit_str)
             break
     return valid_input_debit_or_credit
+
+
+def add_transaction(get_choice, get_deb_or_cred):
+    """
+    Add debit or credit transaction to checkbook.
+    :return: no value is returned
+    """
+    if get_choice == 'credit':
+        transaction_type = 'credit'
+    else:
+        transaction_type = 'debit'
+    with open('checkbook.csv', 'a') as f_trans:
+        cols = ['transaction', 'balance']
+        transaction = {'transaction': transaction_type, 'balance': get_deb_or_cred}
+        writer_transaction = csv.DictWriter(f_trans, fieldnames=cols)
+        writer_transaction.writerow(transaction)
+
 
 while play_game:
     print("~~~ Welcome to the terminal checkbook! ~~~\n")
@@ -77,40 +105,30 @@ while play_game:
             choice = int(choice_str)
             break
 
-    if choice == 4:
+    if choice == 4:  # end game
         print('Thanks, have a great day!')
         play_game = False
 
-    elif choice == 1:
-        checkbook_status = get_checkbook_status()
+    elif choice == 1:  # check balance
+        checkbook_status = get_checkbook_status()    # determine if customer has an account
         print(checkbook_status)
         current_balance = get_checkbook_balance()
         print(f'Your current balance is ${current_balance}\n')
 
-    elif choice == 2:
-        debit = get_valid_input_debit_or_credit(choice)
+    elif choice == 2:  # debit transaction
+        debit = get_valid_input_debit_or_credit(choice)  # validation of debit
         debit = debit * -1
-
         checkbook_status = get_checkbook_status()
         print(checkbook_status)
+        add_transaction(get_choice=choice, get_deb_or_cred=debit)  # add debit to checkbook
+        get_checkbook_balance()
 
-        with open('checkbook.csv', 'a') as f:
-            cols_debit = ['transaction', 'balance']
-            transaction_debit = {'transaction': "debit", 'balance': debit}
-            writer_debit = csv.DictWriter(f, fieldnames=cols_debit)
-            writer_debit.writerow(transaction_debit)
-
-    elif choice == 3:
-        credit = get_valid_input_debit_or_credit(choice)
-
+    elif choice == 3:  # credit transaction
+        credit = get_valid_input_debit_or_credit(choice)  # validation of credit
         checkbook_status = get_checkbook_status()
         print(checkbook_status)
-
-        with open('checkbook.csv', 'a') as f:
-            cols_credit = ['transaction', 'balance']
-            transaction_credit = {'transaction': "debit", 'balance': credit}
-            writer_credit = csv.DictWriter(f, fieldnames=cols_credit)
-            writer_credit.writerow(transaction_credit)
+        add_transaction(get_choice=choice, get_deb_or_cred=credit)  # add credit to checkbook
+        get_checkbook_balance()
 
     else:
         print("Something seriously is fishy - Yo money is gaw-gaw-gone!!!")

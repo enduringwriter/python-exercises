@@ -1,4 +1,7 @@
 transaction,balance
 new account,0
-debit,-30
 debit,100
+debit,-30
+debit,7
+debit,-2
+debit,10
