@@ -153,7 +153,7 @@ def get_search(get_search_choice):
         next(reader)
         lines = [line for line in reader]
 
-        if get_search_choice == 6:
+        if get_search_choice == 5:
             user_search = input("Enter keyword to search: ")
             print('\n')
 
@@ -161,13 +161,11 @@ def get_search(get_search_choice):
                 if user_search in line['description']:
                     print(line)
         else:
-            day_of_week = [{'1': 'Sun'}, {'2': 'Mon'}, {'3': 'Tue'}, {'4': 'Wed'}, {'5': 'Thu'}, {'6': 'Fri'},
-                           {'7': 'Sat'}]
-            day_input = int(input("Enter day of the week to search transaction entries.\nSunday = 1, Mon = 2, Tue = 3, Wed = 4, Thu = 5, Fri = 6, Sat = 7"))
+            day_of_week = {'1': 'Sun', '2': 'Mon', '3': 'Tue', '4': 'Wed', '5': 'Thu', '6': 'Fri', '7': 'Sat'}
+            day_input = input("Enter day of the week to search transaction entries.\nSunday = 1, Mon = 2, Tue = 3, Wed = 4, Thu = 5, Fri = 6, Sat = 7: ")
             user_search = day_of_week[day_input]
-
             for line in lines:
-                if user_search in line['Timestamp']:
+                if user_search in line['timestamp']:
                     print(line)
         print('\n')
 
