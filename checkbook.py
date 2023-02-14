@@ -50,7 +50,7 @@ def get_checkbook_balance():
         content = csv.DictReader(f_gcb, fieldnames=cols)  # output is a list [balance, 0]
         lines = [line for line in content][1:]
         for line in lines:
-            current_total += int(line['balance'])
+            current_total += float(line['balance'])
     return current_total
 
 
@@ -64,11 +64,12 @@ def get_valid_input_debit_or_credit(get_deb_cred_choice):
     else:
         choice_value = 'credit'
     while True:
-        debit_or_credit_str = input(f'How much is the {choice_value}: ').lower()
-        if debit_or_credit_str.isdigit() and int(debit_or_credit_str) > 0:
-            valid_input_debit_or_credit = int(debit_or_credit_str)
+        try:
+            valid_debit_or_credit = float(input(f'How much is the {choice_value}: '))
             break
-    return valid_input_debit_or_credit
+        except ValueError:
+            print("Invalid entry. Please enter a valid number.")
+    return valid_debit_or_credit
 
 
 def add_transaction(get_choice, get_deb_or_cred):
@@ -89,8 +90,14 @@ def add_transaction(get_choice, get_deb_or_cred):
 
 
 def get_user_description():
+    """
+    This function is called by "add_transaction" function.
+    Get user comment for a debit or credit transaction.
+    :return: user description of the transaction
+    """
     while True:
-        description_choice = input("Enter a description for your transaction (up to 30 characters and cannot begin with a number), or press 's' to skip: ").lower()
+        description_choice = input("Enter a description for your transaction (up to 30 characters and cannot begin "
+                                   "with a number), or press 's' to skip: ").lower()
         if description_choice == 's':
             description_choice = ''
             break
@@ -103,7 +110,7 @@ def get_transaction_history():
     print("Galaxy Wide Transaction History\n".center(36, ' '))
     with open('checkbook.csv', 'r') as f_history:
         reader = csv.DictReader(f_history)
-        next(reader)
+        next(reader)  # next pull the header and then moves onward to the next row
         lines = [line for line in reader]
 
         for line in lines:  # get the max length of any tender to expand the output column
@@ -115,8 +122,22 @@ def get_transaction_history():
         print(f"#    Timestamp                    Type       Balance, USD            Description")
         for index, line in enumerate(lines):
             print(f"{index: <4} {line['timestamp']:<28} {line['transaction']:<10}"
-                  f" ${int(line['balance']):>17,.2f} {' ':<4} {line['description']}")
+                  f" ${float(line['balance']):>17,.2f} {' ':<4} {line['description']}")
+        print('\n')
+
+
+def get_search_description():
+    user_search = input("Enter keyword to search: ")
     print('\n')
+    with open('checkbook.csv', 'r') as f_history:
+        reader = csv.DictReader(f_history)
+        next(reader)
+        lines = [line for line in reader]
+
+        for line in lines:
+            if user_search in line['description']:
+                print(line)
+        print('\n')
 
 
 clear()
@@ -130,15 +151,16 @@ while play_game:
     print("2 - record a debit (withdraw)")
     print("3 - record a credit (deposit)")
     print("4 - view intergalactic transaction history")
-    print("5 - exit\n")
+    print("5 - search transaction descriptions")
+    print("6 - exit\n")
 
     while True:
         choice_str = input('Enter your choice: ').lower()
-        if choice_str.isdigit() and (0 < int(choice_str) < 6):
+        if choice_str.isdigit() and (0 < int(choice_str) < 7):
             choice = int(choice_str)
             break
 
-    if choice == 5:  # end game
+    if choice == 6:  # end game
         clear()
         print('Thank you using SuperNova, have a starbrite day!')
         play_game = False
@@ -164,6 +186,10 @@ while play_game:
     elif choice == 4:  # view transaction history
         clear()
         get_transaction_history()
+
+    elif choice == 5:
+        clear()
+        get_search_description()
 
     else:
         print("$omething smells fi$hy - Yo money is gaw-gaw-gone!!! Sorry, SuperNova went Nova!")
