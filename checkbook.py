@@ -64,12 +64,33 @@ def get_valid_input_debit_or_credit(get_deb_cred_choice):
     else:
         choice_value = 'credit'
     while True:
-        try:
-            valid_debit_or_credit = float(input(f'How much is the {choice_value}: '))
+        user_str = input(f'How much is the {choice_value}: ').lower()
+        if '.' in user_str:
+            user_str = user_str.replace('.', ' ')
+            print(user_str)
+            user_str = user_str.split()
+            print(user_str)
+            whole_number_str = str(user_str[0])
+            print(whole_number_str)
+            fractional_number_str = str(user_str[1])
+            print(fractional_number_str)
+            if whole_number_str.isdigit() and fractional_number_str.isdigit():
+                valid_float_str = whole_number_str + '.' + fractional_number_str
+                valid_float = float(valid_float_str)
+                break
+        elif user_str.isdigit() and user_str != '0':
+            valid_float = float(user_str)
             break
-        except ValueError:
-            print("Invalid entry. Please enter a valid number.")
-    return valid_debit_or_credit
+
+        # alternate method using try and except
+        # try:
+        #     valid_debit_or_credit = float(input(f'How much is the {choice_value}: '))
+        #     if valid_debit_or_credit > 0:
+        #         break
+        # except ValueError:
+        #     print("Invalid entry. Please enter a valid number.")
+
+    return valid_float
 
 
 def add_transaction(get_choice, get_deb_or_cred):
