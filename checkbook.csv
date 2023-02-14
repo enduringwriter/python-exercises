@@ -1,7 +1,8 @@
-transaction,balance
-new account,0
-debit,100
-debit,-30
-debit,7
-debit,-2
-debit,10
+timestamp,transaction,balance,description
+Tue Feb 14 13:34:29 2023,new account,0,opened new checkbook account
+Tue Feb 14 13:34:29 2023,credit,100,hello world
+Tue Feb 14 13:34:33 2023,debit,-3,hello world
+Tue Feb 14 13:51:38 2023,credit,3000,added 3000 from saturn
+Tue Feb 14 13:51:59 2023,debit,-100,asldjifalsiejfalseifjasef
+Tue Feb 14 13:52:42 2023,debit,-1,
+Tue Feb 14 13:53:01 2023,credit,333,r44
