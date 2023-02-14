@@ -82,7 +82,7 @@ def get_valid_input_debit_or_credit(get_deb_cred_choice):
             valid_float = float(user_str)
             break
 
-        # alternate method using try and except
+        # alternate method using try and except to obtain valid float entry
         # try:
         #     valid_debit_or_credit = float(input(f'How much is the {choice_value}: '))
         #     if valid_debit_or_credit > 0:
@@ -147,17 +147,28 @@ def get_transaction_history():
         print('\n')
 
 
-def get_search_description():
-    user_search = input("Enter keyword to search: ")
-    print('\n')
+def get_search(get_search_choice):
     with open('checkbook.csv', 'r') as f_history:
         reader = csv.DictReader(f_history)
         next(reader)
         lines = [line for line in reader]
 
-        for line in lines:
-            if user_search in line['description']:
-                print(line)
+        if get_search_choice == 6:
+            user_search = input("Enter keyword to search: ")
+            print('\n')
+
+            for line in lines:
+                if user_search in line['description']:
+                    print(line)
+        else:
+            day_of_week = [{'1': 'Sun'}, {'2': 'Mon'}, {'3': 'Tue'}, {'4': 'Wed'}, {'5': 'Thu'}, {'6': 'Fri'},
+                           {'7': 'Sat'}]
+            day_input = int(input("Enter day of the week to search transaction entries.\nSunday = 1, Mon = 2, Tue = 3, Wed = 4, Thu = 5, Fri = 6, Sat = 7"))
+            user_search = day_of_week[day_input]
+
+            for line in lines:
+                if user_search in line['Timestamp']:
+                    print(line)
         print('\n')
 
 
@@ -173,15 +184,16 @@ while play_game:
     print("3 - record a credit (deposit)")
     print("4 - view intergalactic transaction history")
     print("5 - search transaction descriptions")
-    print("6 - exit\n")
+    print("6 - search transaction timestamps")
+    print("7 - exit\n")
 
     while True:
         choice_str = input('Enter your choice: ').lower()
-        if choice_str.isdigit() and (0 < int(choice_str) < 7):
+        if choice_str.isdigit() and (0 < int(choice_str) < 8):
             choice = int(choice_str)
             break
 
-    if choice == 6:  # end game
+    if choice == 7:  # end game
         clear()
         print('Thank you using SuperNova, have a starbrite day!')
         play_game = False
@@ -208,9 +220,13 @@ while play_game:
         clear()
         get_transaction_history()
 
-    elif choice == 5:
+    elif choice == 5:  # search description history
         clear()
-        get_search_description()
+        get_search(get_search_choice=choice)
+
+    elif choice == 6:  # search transaction timestamps
+        clear()
+        get_search(get_search_choice=choice)
 
     else:
         print("$omething smells fi$hy - Yo money is gaw-gaw-gone!!! Sorry, SuperNova went Nova!")
