@@ -7,11 +7,12 @@ Checkbook is a command line checkbook application that allows users to track the
 import csv
 import os
 import time
+import random
 
 # variables
 play_game = True
 
-# global variables - global is generally use for static variables that don't change
+# global variables - global is generally used for static variables that don't change
 cols = ['timestamp', 'transaction', 'balance', 'description']
 
 
@@ -172,13 +173,37 @@ def get_stats_summary():
         next(reader)
         lines = [line for line in reader]
 
+        max_credit = 0
+        for line in lines:
+            if float(line['balance']) > max_credit:
+                max_credit = float(line['balance'])
+        print(f"Maximum withdrawal amount, galaxy wide: ${max_credit:,.2f}")
+
+        min_credit = float('+inf')
+        for line in lines:
+            if float(line['balance']) < min_credit and float(line['balance']) > 0:
+                min_credit = float(line['balance'])
+        print(f"Minimum withdrawal amount, galaxy wide: ${min_credit:,.2f}")
+
+        max_debit = 0
+        for line in lines:
+            if float(line['balance']) < max_debit:
+                max_debit = float(line['balance'])
+        print(f"Maximum galactic withdrawal: ${max_debit:,.2f}")
+
+        min_debit = float('-inf')
+        for line in lines:
+            if float(line['balance']) > min_debit and float(line['balance']) < 0:
+                min_debit = float(line['balance'])
+        print(f"Minimum galactic withdrawal: ${min_debit:,.2f}")
+
         total_credits = 0
         each_credit = 0
         for line in lines:
             if line['transaction'] == 'credit':
                 each_credit = float(line['balance'])
             total_credits += each_credit  # Output of sum is not correct, don't know why
-        print(f"Total deposits: ${total_credits:,.2f}")
+        print(f"Total Milky Way deposits: ${total_credits:,.2f}")
 
         total_debits = 0
         each_debit = 0
@@ -186,8 +211,16 @@ def get_stats_summary():
             if line['transaction'] == 'debit':
                 each_debit = float(line['balance'])
             total_debits += each_debit  # Output of sum is not correct, don't know why
-        print(f"Total withdrawals: ${total_debits:,.2f}\n")
+        print(f"Total Milky Way withdrawals: ${total_debits:,.2f}\n")
 
+def get_random_number():
+    random_number_int = random.randint(1, 3)
+    if random_number_int == 1:
+        print("You been scammed - Yo money, MY MONEY! - Ponzi principle!\n")
+    elif random_number_int == 2:
+        print("SuperNova went nova! Sorry, yo money gone!\n")
+    elif random_number_int == 3:
+        print("Martian dollars ain't worth dung.\n")
 
 clear()
 print("\n~~~ Welcome to SuperNova's Intergalactic Terminal Checkbook! ~~~".center(64, '~'))
@@ -201,17 +234,18 @@ while play_game:
     print("3 - record a credit (deposit)")
     print("4 - view intergalactic transaction history")
     print("5 - search transaction descriptions")
-    print("6 - search transaction timestamps")
-    print("7 - get summary of checkbook statistics")
-    print("8 - exit\n")
+    print("6 - search transaction timestamps (time travel not included)")
+    print("7 - summary of checkbook statistics")
+    print("8 - quote of the day")
+    print("9 - exit\n")
 
     while True:
         choice_str = input('Enter your choice: ').lower()
-        if choice_str.isdigit() and (0 < int(choice_str) < 9):
+        if choice_str.isdigit() and (0 < int(choice_str) < 10):
             choice = int(choice_str)
             break
 
-    if choice == 8:  # end game
+    if choice == 9:  # end game
         clear()
         print('Thank you using SuperNova, have a starbrite day!')
         play_game = False
@@ -249,6 +283,10 @@ while play_game:
     elif choice == 7:  # view summary of checkbook statistics
         clear()
         get_stats_summary()
+
+    elif choice == 8:
+        clear()
+        get_random_number()
 
     else:
         print("$omething smells fi$hy - Yo money is gaw-gaw-gone!!! Sorry, SuperNova went Nova!")
