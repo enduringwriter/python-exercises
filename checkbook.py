@@ -67,13 +67,9 @@ def get_valid_input_debit_or_credit(get_deb_cred_choice):
         user_str = input(f'How much is the {choice_value}: ').lower()
         if '.' in user_str:
             user_str = user_str.replace('.', ' ')
-            print(user_str)
             user_str = user_str.split()
-            print(user_str)
             whole_number_str = str(user_str[0])
-            print(whole_number_str)
             fractional_number_str = str(user_str[1])
-            print(fractional_number_str)
             if whole_number_str.isdigit() and fractional_number_str.isdigit():
                 valid_float_str = whole_number_str + '.' + fractional_number_str
                 valid_float = float(valid_float_str)
@@ -154,7 +150,7 @@ def get_search(get_search_choice):
         lines = [line for line in reader]
 
         if get_search_choice == 5:
-            user_search = input("Enter keyword to search: ")
+            user_search = input("Enter keyword to search descriptions in debit and credit entries: ")
             print('\n')
 
             for line in lines:
@@ -162,12 +158,35 @@ def get_search(get_search_choice):
                     print(line)
         else:
             day_of_week = {'1': 'Sun', '2': 'Mon', '3': 'Tue', '4': 'Wed', '5': 'Thu', '6': 'Fri', '7': 'Sat'}
-            day_input = input("Enter day of the week to search transaction entries.\nSunday = 1, Mon = 2, Tue = 3, Wed = 4, Thu = 5, Fri = 6, Sat = 7: ")
+            day_input = input("Enter day of the week to search timestamp in debit and credit entries.\nSunday = 1, Mon = 2, Tue = 3, Wed = 4, Thu = 5, Fri = 6, Sat = 7: ")
             user_search = day_of_week[day_input]
             for line in lines:
                 if user_search in line['timestamp']:
                     print(line)
         print('\n')
+
+
+def get_stats_summary():
+    with open('checkbook.csv', 'r') as f_history:
+        reader = csv.DictReader(f_history)
+        next(reader)
+        lines = [line for line in reader]
+
+        total_credits = 0
+        each_credit = 0
+        for line in lines:
+            if line['transaction'] == 'credit':
+                each_credit = float(line['balance'])
+            total_credits += each_credit  # Output of sum is not correct, don't know why
+        print(f"Total deposits: ${total_credits:,.2f}")
+
+        total_debits = 0
+        each_debit = 0
+        for line in lines:
+            if line['transaction'] == 'debit':
+                each_debit = float(line['balance'])
+            total_debits += each_debit  # Output of sum is not correct, don't know why
+        print(f"Total withdrawals: ${total_debits:,.2f}\n")
 
 
 clear()
@@ -183,15 +202,16 @@ while play_game:
     print("4 - view intergalactic transaction history")
     print("5 - search transaction descriptions")
     print("6 - search transaction timestamps")
-    print("7 - exit\n")
+    print("7 - get summary of checkbook statistics")
+    print("8 - exit\n")
 
     while True:
         choice_str = input('Enter your choice: ').lower()
-        if choice_str.isdigit() and (0 < int(choice_str) < 8):
+        if choice_str.isdigit() and (0 < int(choice_str) < 9):
             choice = int(choice_str)
             break
 
-    if choice == 7:  # end game
+    if choice == 8:  # end game
         clear()
         print('Thank you using SuperNova, have a starbrite day!')
         play_game = False
@@ -225,6 +245,10 @@ while play_game:
     elif choice == 6:  # search transaction timestamps
         clear()
         get_search(get_search_choice=choice)
+
+    elif choice == 7:  # view summary of checkbook statistics
+        clear()
+        get_stats_summary()
 
     else:
         print("$omething smells fi$hy - Yo money is gaw-gaw-gone!!! Sorry, SuperNova went Nova!")
